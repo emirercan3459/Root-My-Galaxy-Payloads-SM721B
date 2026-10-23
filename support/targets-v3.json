@@ -291,7 +291,7 @@
       "requiresFreshP0Session": false,
       "exploit": {
         "url": "https://raw.githubusercontent.com/emirercan3459/Root-My-Galaxy-Payloads-SM721B/main/artifacts/r12s-S721BXXUEEZIF/cve-2026-43499-app.so",
-        "size": 126408
+        "size": 126624
       },
       "kernelsu": {
         "url": "https://raw.githubusercontent.com/emirercan3459/Root-My-Galaxy-Payloads-SM721B/main/kernelsu/ksud-r12s-S721BXXUEEZIF-kdp",
