@@ -20,6 +20,8 @@ between KMIs.
 | `ksud-e3q-S928BXXS6DZF2-kdp` | Same exact S928B build | `android14-6.1` | Late-load binary embedding the S928B no-patch-text module; module-load hardware-tested |
 | `android14-6.1_kernelsu-e2s-S926BXXUEDZDR-kdp.ko` | `SM-S926B`, `S926BXXUEDZDR` | `android14-6.1` | Exact E2S no-patch-text module with target `vermagic`, audited for manual relocation |
 | `ksud-e2s-S926BXXUEDZDR-kdp` | Same exact E2S build | `android14-6.1` | Device-tested late-load binary embedding the E2S no-patch-text module |
+| `android14-6.1_kernelsu-r12s-S721BXXUEEZIF-kdp.ko` | `SM-S721B`, `S721BXXUEEZIF` | `android14-6.1` | SCDZF3 module with the EZIF `vermagic`; audited against the recovered EZIF ELF (202 imports, 0 missing, empty `__versions`, 0 CRC mismatches) |
+| `ksud-r12s-S721BXXUEEZIF-kdp` | Same exact S721B EZIF build | `android14-6.1` | Late-load binary embedding the vermagic-adapted module |
 | `android14-6.1_kernelsu-e1s-S921NKSSFDZF3-kdp.ko` | `SM-S921N`, `S921NKSSFDZF3` | `android14-6.1` | Exact S921N no-patch-text module with target `vermagic`, audited for manual relocation |
 | `ksud-e1s-S921NKSSFDZF3-kdp` | Same exact S921N build | `android14-6.1` | Device-tested late-load binary embedding the S921N no-patch-text module |
 | `android14-6.1_kernelsu-e1s-S921BXXSFDZE1-kdp.ko` | `SM-S921B`, `S921BXXSFDZE1` | `android14-6.1` | Exact E1S no-patch-text module with target `vermagic`, audited for manual relocation |
@@ -266,6 +268,22 @@ $env:CC_aarch64_linux_android = "$ndkBin\aarch64-linux-android35-clang.cmd"
 $env:AR_aarch64_linux_android = "$ndkBin\llvm-ar.exe"
 cargo build --release --target aarch64-linux-android -p ksud
 ```
+
+## SM-S721B EZIF (6.1.162) late-load pair
+
+The `r12s-S721BXXUEEZIF` profile uses a vermagic-only adaptation of the
+SCDZF3 module because both releases share the same Samsung 6.1 KMI:
+
+- source module: `android14-6.1_kernelsu-r12s-S721BXXSCDZF3-kdp.ko`
+- `vermagic` changed from `6.1.157-android14-11` to `6.1.162-android14-11`
+  (same string length; no code changes)
+- audited against the recovered EZIF `vmlinux.elf`: 202 undefined imports,
+  zero missing symbols, empty `__versions`, zero CRC mismatches
+- `ksud-r12s-S721BXXUEEZIF-kdp` embeds exactly that patched module
+
+A source rebuild from the EZIF tree remains preferable once the Samsung source
+drop is available. This pair exists because the bootloader is locked on One UI
+8 and later, so the module can only be late-loaded per boot.
 
 ## Rebuild the A155N 5.10 artifact
 
