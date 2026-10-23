@@ -1081,6 +1081,10 @@ int expand_p0_pipe_oracle(void) {
   return 1;
 }
 
+int p0_pipe_gate_hits_global = 0;
+int p0_pipe_gate_changed_global = 0;
+int p0_pipe_gate_pipe_index_global = -1;
+
 int verify_p0_pipe_oracle_gate(void) {
   unsigned char page[PAGE_SIZE];
   int gate_hits = 0;
@@ -1145,6 +1149,10 @@ int verify_p0_pipe_oracle_gate(void) {
   }
   pr_info("p0 pipe gate hits=%d changed=%d\n",
           gate_hits, changed_pages);
+  p0_pipe_gate_hits_global = gate_hits;
+  p0_pipe_gate_changed_global = changed_pages;
+  p0_pipe_gate_pipe_index_global =
+      (gate_hits == 1 && changed_pages == 0) ? gate_pipe_index : -1;
   if (gate_hits != 0 || changed_pages != 0) {
     spawn_p0_ref_keeper(
         gate_hits == 1 && changed_pages == 0 ? gate_pipe_index : -1);
