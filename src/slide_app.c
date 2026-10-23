@@ -2504,7 +2504,6 @@ static int slide_leak_physical_base(void) {
           pr_error("p0 fingerprint source offset exceeds probe source=%08zx "
                    "probe=%08llx\n",
                    offset, (unsigned long long)P0_ORACLE_PROBE_OFFSET);
-          slide_restore_physical_oracle();
           return 0;
         }
         uintptr_t source_offset = offset;
@@ -2515,7 +2514,7 @@ static int slide_leak_physical_base(void) {
           return slide_commit_stext(KIMAGE_TEXT_BASE + offset, "physical");
         }
       }
-      slide_restore_physical_oracle();
+      pr_warning("p0 physical gate-only scan failed, skipping restore to avoid rt_mutex panic\n");
       return 0;
     }
 #endif
