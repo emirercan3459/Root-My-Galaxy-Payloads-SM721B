@@ -89,7 +89,9 @@ void init_ctx(struct mm_ctx *ctx, size_t cnt) {
 }
 
 void resize_pipe_slots(int pipefd[2], size_t slots) {
-  SYSCHK(fcntl(pipefd[0], F_SETPIPE_SZ, slots * PAGE_SIZE));
+  if (fcntl(pipefd[0], F_SETPIPE_SZ, slots * PAGE_SIZE) < 0) {
+    /* Best effort - some kernels/SELinux policies restrict pipe resizing */
+  }
 }
 
 void make_pipe_object(int pipefd[2]) {
