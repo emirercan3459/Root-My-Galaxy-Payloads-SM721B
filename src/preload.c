@@ -273,9 +273,16 @@ __attribute__((constructor)) static void load(void) {
       pr_error("p0 oracle dirtied before slide discovery; refusing unsafe retry\n");
 #else
     } else if (atomic_load(&app_p0_state->dirty)) {
+#if defined(APP_P0_RETRY_AFTER_WRITER) && APP_P0_RETRY_AFTER_WRITER
+      pr_warning("p0 oracle dirty; retry allowed (APP_P0_RETRY_AFTER_WRITER)\n");
+#else
       pr_error("p0 oracle state dirty or uncertain; refusing unsafe retry\n");
-#endif
       break;
+#endif
+#endif
+#if !defined(APP_P0_RETRY_AFTER_WRITER) || !APP_P0_RETRY_AFTER_WRITER
+      break;
+#endif
     }
 #endif
 
