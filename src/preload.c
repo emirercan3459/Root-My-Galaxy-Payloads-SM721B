@@ -235,8 +235,12 @@ __attribute__((constructor)) static void load(void) {
 
 #if defined(APP_PAYLOAD) && defined(SLIDE_P0_OFFSET_CANDIDATES)
     if (atomic_load(&app_p0_state->writer_started)) {
+#if defined(APP_P0_RETRY_AFTER_WRITER) && APP_P0_RETRY_AFTER_WRITER
+      pr_warning("stack writer ran; retrying with retained p0 context\n");
+#else
       pr_error("stack writer ran; refusing retry on this boot\n");
       break;
+#endif
     }
 #endif
 
